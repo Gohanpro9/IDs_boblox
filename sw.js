@@ -1,0 +1,46 @@
+const CACHE = "ids-roblox-v1";
+
+const ARCHIVOS = [
+    "./",
+    "./index.html",
+    "./lista.json",
+    "./manifest.json"
+];
+
+self.addEventListener("install", event => {
+    event.waitUntil(
+        caches.open(CACHE).then(cache => cache.addAll(ARCHIVOS))
+    );
+    self.skipWaiting();
+});
+
+self.addEventListener("activate", event => {
+    event.waitUntil(
+        caches.keys().then(keys =>
+            Promise.all(
+                keys.map(key => {
+                    if (key !== CACHE) {
+                        return caches.delete(key);
+                    }
+                })
+            )
+        )
+    );
+    self.clients.claim();
+});
+
+self.addEventListener("fetch", event => {
+    if (event.request.method !== "GET") return;
+
+    event.respondWith(
+        fetch(event.request)
+            .then(response => {
+                const copia = response.clone();
+                caches.open(CACHE).then(cache => {
+                    cache.put(event.request, copia);
+                });
+                return response;
+            })
+            .catch(() => caches.match(event.request))
+    );
+});
