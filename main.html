@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IDs de Sonidos Roblox</title>
+
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#181818">
+
+<style>
+body{
+    margin:0;
+    font-family:Arial,sans-serif;
+    background:#181818;
+    color:#fff;
+}
+
+header{
+    background:#222;
+    padding:15px;
+    text-align:center;
+    font-size:22px;
+    font-weight:bold;
+}
+
+#estado{
+    text-align:center;
+    padding:10px;
+    color:#bbb;
+}
+
+#lista{
+    padding:15px;
+}
+
+.item{
+    background:#2b2b2b;
+    border-radius:10px;
+    padding:15px;
+    margin-bottom:10px;
+    cursor:pointer;
+    transition:.2s;
+}
+
+.item:hover{
+    background:#383838;
+}
+
+.nombre{
+    font-size:18px;
+    font-weight:bold;
+}
+
+.id{
+    margin-top:5px;
+    color:#aaa;
+    font-family:monospace;
+}
+</style>
+</head>
+<body>
+
+<header>🎵 IDs de Sonidos Roblox</header>
+
+<div id="estado">Cargando...</div>
+
+<div id="lista"></div>
+
+<script>
+const listaDiv=document.getElementById("lista");
+const estado=document.getElementById("estado");
+
+function actualizarEstado(){
+    estado.textContent=navigator.onLine?
+    "🟢 En línea":
+    "🔴 Sin conexión (usando datos guardados)";
+}
+
+window.addEventListener("online",actualizarEstado);
+window.addEventListener("offline",actualizarEstado);
+actualizarEstado();
+
+fetch("lista.json")
+.then(r=>r.json())
+.then(data=>{
+    listaDiv.innerHTML="";
+
+    data.lista.forEach(sonido=>{
+        const item=document.createElement("div");
+        item.className="item";
+
+        item.innerHTML=`
+            <div class="nombre">${sonido.nombre}</div>
+            <div class="id">${sonido.id}</div>
+        `;
+
+        item.onclick=async()=>{
+            await navigator.clipboard.writeText(sonido.id);
+            estado.textContent=`✅ Copiado: ${sonido.nombre}`;
+            setTimeout(actualizarEstado,1200);
+        };
+
+        listaDiv.appendChild(item);
+    });
+});
+
+if("serviceWorker" in navigator){
+    navigator.serviceWorker.register("sw.js");
+}
+</script>
+
+</body>
+</html>
