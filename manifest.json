@@ -1,0 +1,11 @@
+{
+  "name": "IDs de Sonidos Roblox",
+  "short_name": "IDs Roblox",
+  "description": "Guarda y copia IDs de sonidos de Roblox.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#181818",
+  "theme_color": "#181818",
+  "orientation": "portrait"
+}
